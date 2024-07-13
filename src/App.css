@@ -1,0 +1,118 @@
+/* Variables */
+:root {
+  --primary-color: #007bff;
+  --secondary-color: #6c757d;
+  --background-color: #f8f9fa;
+  --text-color: #212529;
+  --border-color: #dee2e6;
+  --padding: 1rem;
+  --margin: 1rem;
+}
+
+/* Mixins converted to classes */
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.box-shadow {
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* General styles */
+body {
+  font-family: 'Arial, sans-serif';
+  background-color: var(--background-color);
+  color: var(--text-color);
+  margin: 0;
+  padding: 0;
+  /* position: fixed; */
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--padding);
+}
+
+.header,
+.footer {
+  background-color: var(--primary-color);
+  color: white;
+  padding: var(--padding);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.main-content {
+  background-color: white;
+  padding: var(--padding);
+  margin: var(--margin);
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Component specific styles */
+.general-test-info,
+.reading-direction,
+.end-of-section,
+.volume-directions,
+.put-on-headset,
+.speaking-direction,
+.writing-direction {
+  background-color: var(--secondary-color);
+  color: white;
+  padding: var(--padding);
+  margin: var(--margin);
+  border-radius: 5px;
+}
+
+.reading,
+.listening,
+.speaking,
+.writing {
+  background-color: var(--primary-color);
+  color: white;
+  padding: var(--padding);
+  margin: var(--margin);
+  border-radius: 5px;
+}
+
+button {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: var(--padding);
+  margin: var(--margin);
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+button:hover {
+  background-color: #0056b3; /* Darken primary color */
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  padding: var(--padding);
+  margin: var(--margin) 0;
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0.5rem;
+  }
+
+  .header,
+  .footer,
+  .main-content {
+    padding: 0.5rem;
+  }
+}

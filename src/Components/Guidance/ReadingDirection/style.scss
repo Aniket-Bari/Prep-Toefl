@@ -1,0 +1,31 @@
+.reading-direction-main {
+    margin: 5%;
+    margin-left: 15%;
+    width: 55%;
+    height: 500px;
+    border-color: #000;
+    border-width: 1px;
+    border-style: solid;
+    padding: 0 8% !important;
+    overflow-y: auto;
+    
+    @media (max-width: 768px) {
+        width: 90%;
+        margin: 1%;
+        padding: 5%;
+      }
+
+    .reading-main-heading {
+        text-align: center;
+    }
+
+    .reading-description-main {
+        padding: 0 3% 0 3%;
+        font-size: 16px;
+        text-align: justify;
+
+        .reading-description-continue {
+            margin: 36px 0 20px 0;
+        }
+    }
+}

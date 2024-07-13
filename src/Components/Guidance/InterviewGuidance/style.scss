@@ -1,0 +1,21 @@
+.interview-guidance-main {
+    margin: auto;
+    width: 65%;
+    height: calc(100vh - 130px);
+    border-color: #000;
+    border-width: 0px 1px 1px 1px;
+    border-style: solid;
+
+    .interview_main-heading {
+        text-align: center;
+        padding: 20px 0 35px 0;
+    }
+
+    .interview-description-main {
+        padding: 0 15% 0 15%;
+
+        .interview-description-continue {
+            margin: 36px 0 293px 0;
+        }
+    }
+}

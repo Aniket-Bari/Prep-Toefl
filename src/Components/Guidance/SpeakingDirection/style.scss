@@ -1,0 +1,35 @@
+.speaking-guidance-main {
+    margin: 10%;
+    margin-left: 20%;
+    width: 65%;
+    height: calc(100vh - 130px);
+    border-color: #000;
+    border-width: 1px 1px 1px 1px;
+    border-style: solid;
+
+    .reading-main-heading {
+        text-align: center;
+        padding: 20px 0 20px 0;
+    }
+
+    .speaking-description-main {
+        margin: 0 4rem;
+
+        .para-points {
+
+            p {
+                margin-bottom: 0px;
+            }
+        }
+        p{
+            b{
+                color: #551a8b;
+            }
+        }
+    }
+
+    audio {
+        display: none;
+    }
+
+}

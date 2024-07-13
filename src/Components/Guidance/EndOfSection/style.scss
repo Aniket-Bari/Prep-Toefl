@@ -1,0 +1,26 @@
+.end-guidance-main {
+    margin: 5%;
+    margin-left: 25%;
+    width: 65%;
+    height: 500px;
+    border-color: #000;
+    border-width: 1px 1px 1px 1px;
+    border-style: solid;
+    // padding: 0 9rem;
+
+   .sec-head-line{
+    text-align: center;
+    background-color: #000;
+    color: rgb(254, 254, 254);
+   }
+
+   .section-guide{
+    display: flex;
+    justify-content: center;
+
+    .guide{
+        width: 40rem;
+        margin-top: 9rem;
+    }
+   }
+}

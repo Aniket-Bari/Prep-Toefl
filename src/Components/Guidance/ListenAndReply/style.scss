@@ -1,0 +1,19 @@
+.listen-repeat-main{
+    margin: auto;
+    width: 65%;
+    height: calc(100vh - 130px);
+    border-color: #000;
+    border-width: 0px 1px 1px 1px;
+    border-style: solid;
+    padding: 0 5rem;
+
+    .listen-repeat-heading {
+        text-align: center;
+        padding: 20px 0 20px 0;
+    }
+
+    .listen-repeat-description{
+        padding: 0 3% 0 3%;
+        font-size: 16px;
+    }
+}

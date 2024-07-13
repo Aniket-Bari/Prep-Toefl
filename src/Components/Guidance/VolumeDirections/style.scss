@@ -1,0 +1,29 @@
+.volume-direction-main {
+    margin: 5%;
+    margin-left: 15%;
+    width: 55%;
+    height: 500px;
+    border-color: #000;
+    border-width: 1px;
+    border-style: solid;
+    padding: 0 8% !important;
+
+    .reading-main-heading {
+        text-align: center;
+        padding: 20px 0 20px 0;
+    }
+
+    .speaking-description-main {
+        margin: 0 4rem;
+        .para-points {
+
+            p{
+                margin-bottom: 0px;
+            }
+        }
+    }
+audio{
+    display: none;
+}
+
+}
