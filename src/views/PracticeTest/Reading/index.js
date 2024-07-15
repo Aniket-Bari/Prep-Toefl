@@ -6,6 +6,7 @@ import advancedTOEFLDatabase from './../../../db';
 import { useDispatch } from 'react-redux';
 import { getAllQuestionsList } from './../../../redux/actions/QuestionAction';
 import debounce from 'lodash.debounce';
+// import axios from 'axios';
 
 const Reading = ({ apiEndpoint = 'http://127.0.0.1:8000/api/toefl/r_q' }) => {
   const [loading, setLoading] = useState(true);
@@ -23,7 +24,9 @@ const Reading = ({ apiEndpoint = 'http://127.0.0.1:8000/api/toefl/r_q' }) => {
     const dataList = {
       user_id: 1,
       test_id: 1,
-      test_status: "P",
+      section_type: "P",
+      test_type: "reading1",
+      test_status: "E",
     };
     const header = {
       Accept: "application/json",
@@ -136,6 +139,12 @@ const Reading = ({ apiEndpoint = 'http://127.0.0.1:8000/api/toefl/r_q' }) => {
         questionIndex: currentQuestionIndex,
         answer: selectedOptionsForCurrentQuestion,
       });
+      // await axios.post('http://localhost:8000/api/Store', {
+      //   testId: tests[currentIndex].id,
+      //   questionIndex: currentQuestionIndex,
+      //   answer: selectedOptionsForCurrentQuestion,
+      //   score: questionScore,
+      // });
     } catch (error) {
       console.error('Error saving answer to IndexedDB:', error);
     }
@@ -190,31 +199,32 @@ const Reading = ({ apiEndpoint = 'http://127.0.0.1:8000/api/toefl/r_q' }) => {
     if (!tests || tests.length === 0 || !questions[questionIndex] || !Array.isArray(questions[questionIndex].correct_answer)) {
       return 0;
     }
-  
+
     const correctAnswer = questions[questionIndex].correct_answer;
     const selected = selectedOptions || [];
-  
+
     const isCorrect = correctAnswer.every(option => selected.includes(option));
-  
+
     return isCorrect ? 1.5 : 0;
   };
-    
+
   const resetTest = () => {
     setCurrentIndex(0);
     setCurrentQuestionIndex(-1);
     setSelectedOptions({});
-    setScore(0); // Reset score
+    setScore(0);
     localStorage.removeItem('currentIndex');
     localStorage.removeItem('currentQuestionIndex');
     debouncedSaveSelectedOptionsToDB({});
   };
 
   const handleSave = () => {
+
   };
 
   const handleExit = () => {
     resetTest();
-    navigate('/'); 
+    navigate('/end-of-section');
   };
 
   if (loading) {
@@ -320,6 +330,12 @@ const Reading = ({ apiEndpoint = 'http://127.0.0.1:8000/api/toefl/r_q' }) => {
         )}
       </div>
       <div className="score-display">Score: {score} / 30</div>
+      <div>
+        {score >= 24 ? "Advanced (24-30)" :
+          score >= 18 ? "High-Intermediate (18-23)" :
+            score >= 4 ? "Low-Intermediate (4-17)" :
+              "Below Low-Intermediate (0-3)"}
+      </div>
     </div>
   );
 };
