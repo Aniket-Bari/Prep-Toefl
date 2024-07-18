@@ -23,16 +23,16 @@ const Reading = () => {
   const [selectedOptions, setSelectedOptions] = useState({});
   const [score, setScore] = useState(0);
 
-  const tests = useLiveQuery(() => advancedTOEFLDatabase.readingTestQuestion.toArray(), []);
+  // const tests = useLiveQuery(() => advancedTOEFLDatabase.readingTestQuestion.toArray(), []);
   // console.log(tests)
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   // useEffect(() => {
     const fetchQuestions = () => {
-      console.log('hii')
+      // console.log('hii')
       const dataList = {
-        user_id: 1,
+        user_id: 1, 
         test_id: 1,
         // section_type: "P",
         test_type: "P",
@@ -49,7 +49,7 @@ const Reading = () => {
           header,
           dataList,
           onSuccess: async (response) => {
-            console.log(response)
+            console.log(response);
             if (response?.data?.statusCode === 200) {
               const data = response.data.data;
               console.log('Fetched data:', data);
@@ -63,13 +63,15 @@ const Reading = () => {
               await saveTestsToDB(parsedData);
               setLoading(false);
             } else if (response?.data?.statusCode === 599) {
-             
+              setError("Some error occurred.");
+              setLoading(false);
             }
           },
           onFailure: (error) => {
+            console.log("hii",error);
             setError(error.message);
             setLoading(false);
-            console.log("hii",error);
+            
           },
         })
       );
@@ -119,20 +121,20 @@ const Reading = () => {
   //   );
   // }, [dispatch]);
 
-  const saveTestsToDB = async (tests) => {
+  const saveTestsToDB = async (getQuestionsReadingTestDataOfDB) => {
     try {
       await advancedTOEFLDatabase.readingTestQuestion.clear();
-      await advancedTOEFLDatabase.readingTestQuestion.bulkAdd(tests);
+      await advancedTOEFLDatabase.readingTestQuestion.bulkAdd(getQuestionsReadingTestDataOfDB);
     } catch (error) {
       console.error('Error saving tests to IndexedDB:', error);
     }
   };
 
   const loadSelectedOptions = useCallback(async () => {
-    if (!tests || tests.length === 0) return;
+    if (!getQuestionsReadingTestDataOfDB || getQuestionsReadingTestDataOfDB.length === 0) return;
 
     try {
-      const answers = await advancedTOEFLDatabase.readingTestAnswer.where({ testId: tests[currentIndex]?.id }).toArray();
+      const answers = await advancedTOEFLDatabase.readingTestAnswer.where({ testId: getQuestionsReadingTestDataOfDB[currentIndex]?.id }).toArray();
       const selectedOptionsMap = {};
       answers.forEach(answer => {
         selectedOptionsMap[answer.questionIndex] = answer.answer;
@@ -141,17 +143,17 @@ const Reading = () => {
     } catch (error) {
       console.error('Error loading selected options from IndexedDB:', error);
     }
-  }, [currentIndex, tests]);
+  }, [currentIndex, getQuestionsReadingTestDataOfDB]);
 
   useEffect(() => {
     if (getQuestionsReadingTestDataOfDB && getQuestionsReadingTestDataOfDB?.length === 0) {
-      console.log(getQuestionsReadingTestDataOfDB?.length)
+      // console.log(getQuestionsReadingTestDataOfDB?.length)
       fetchQuestions();
     } else {
       setLoading(false);
       loadSelectedOptions();
     }
-    }, [fetchQuestions, loadSelectedOptions, tests]);
+    }, [fetchQuestions, loadSelectedOptions, getQuestionsReadingTestDataOfDB]);
   // }, [loadSelectedOptions, tests]);
 
   useEffect(() => {
@@ -160,7 +162,7 @@ const Reading = () => {
   }, [currentIndex, currentQuestionIndex]);
 
   const handleNextOrSubmit = () => {
-    if (currentIndex === tests.length - 1 && currentQuestionIndex === questions.length - 1) {
+    if (currentIndex === getQuestionsReadingTestDataOfDB.length - 1 && currentQuestionIndex === questions.length - 1) {
       handleContinue(); 
     } else {
       handleNext();
@@ -170,7 +172,7 @@ const Reading = () => {
   const handleNext = () => {
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
-    } else if (currentIndex < tests.length - 1) {
+    } else if (currentIndex < getQuestionsReadingTestDataOfDB.length - 1) {
       setCurrentIndex(currentIndex + 1);
       setCurrentQuestionIndex(-1);
     }
@@ -181,12 +183,12 @@ const Reading = () => {
       setCurrentQuestionIndex(currentQuestionIndex - 1);
     } else if (currentIndex > 0) {
       setCurrentIndex(currentIndex - 1);
-      setCurrentQuestionIndex(tests[currentIndex - 1].questions.length - 1);
+      setCurrentQuestionIndex(getQuestionsReadingTestDataOfDB[currentIndex - 1].questions.length - 1);
     }
   };
 
   const handleContinue = async () => {
-    if (!tests || tests.length === 0) return;
+    if (!getQuestionsReadingTestDataOfDB || getQuestionsReadingTestDataOfDB.length === 0) return;
 
     const selectedOptionsForCurrentQuestion = selectedOptions[currentQuestionIndex] || [];
     const questionScore = calculateQuestionScore(currentIndex, currentQuestionIndex, selectedOptionsForCurrentQuestion);
@@ -195,7 +197,7 @@ const Reading = () => {
 
     try {
       await advancedTOEFLDatabase.readingTestAnswer.add({
-        testId: tests[currentIndex].id,
+        testId: getQuestionsReadingTestDataOfDB[currentIndex].id,
         questionIndex: currentQuestionIndex,
         answer: selectedOptionsForCurrentQuestion,
       });
@@ -216,7 +218,7 @@ const Reading = () => {
   const debouncedSaveSelectedOptionsToDB = useCallback(debounce(async (updatedSelectedOptions) => {
     try {
       const answers = Object.keys(updatedSelectedOptions).map(questionIndex => ({
-        testId: tests[currentIndex].id,
+        testId: getQuestionsReadingTestDataOfDB[currentIndex].id,
         questionIndex: parseInt(questionIndex, 10),
         answer: updatedSelectedOptions[questionIndex],
       }));
@@ -224,7 +226,7 @@ const Reading = () => {
     } catch (error) {
       console.error('Error saving selected options to IndexedDB:', error);
     }
-  }, 500), [tests, currentIndex]);
+  }, 500), [getQuestionsReadingTestDataOfDB, currentIndex]);
 
   const handleOptionChange = (event, allowsMultipleSelection) => {
     const { value } = event.target;
@@ -256,7 +258,7 @@ const Reading = () => {
   };
 
   const calculateQuestionScore = (questionIndex, selectedOptions) => {
-    if (!tests || tests.length === 0 || !questions[questionIndex] || !Array.isArray(questions[questionIndex].correct_answer)) {
+    if (!getQuestionsReadingTestDataOfDB || getQuestionsReadingTestDataOfDB.length === 0 || !questions[questionIndex] || !Array.isArray(questions[questionIndex].correct_answer)) {
       return 0;
     }
 
@@ -295,11 +297,11 @@ const Reading = () => {
     return <p>Error: {error}</p>;
   }
 
-  if (!tests || tests.length === 0) {
+  if (!getQuestionsReadingTestDataOfDB || getQuestionsReadingTestDataOfDB.length === 0) {
     return <p>No tests available.</p>;
   }
 
-  const currentTest = tests[currentIndex];
+  const currentTest = getQuestionsReadingTestDataOfDB[currentIndex];
   let paragraphs = [];
   let title = '';
   let questions = [];
@@ -335,7 +337,7 @@ const Reading = () => {
 
   const currentQuestion = questions[currentQuestionIndex] || {};
   const allowsMultipleSelection = getMaxSelectionLimit(currentQuestionIndex) > 1;
-  const isLastQuestion = currentIndex === tests.length - 1 && currentQuestionIndex === questions.length - 1;
+  const isLastQuestion = currentIndex === getQuestionsReadingTestDataOfDB.length - 1 && currentQuestionIndex === questions.length - 1;
 
 
   const ShowHideContents = ({ paragraph }) => {
@@ -437,7 +439,7 @@ const Reading = () => {
           score >= 18 ? "High-Intermediate (18-23)" :
             score >= 4 ? "Low-Intermediate (4-17)" :
               "Below Low-Intermediate (0-3)"}
-      </div>
+      </div>  
     </div>
   );
 };
