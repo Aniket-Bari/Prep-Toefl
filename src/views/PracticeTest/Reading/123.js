@@ -20,13 +20,13 @@ const Reading = ({ apiEndpoint = 'http://127.0.0.1:8000/api/toefl/r_q' }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  useEffect(() => {
+  // useEffect(()=>{
     const fetchQuestions = () => {
       const dataList = {
         user_id: 1,
         test_id: 1,
         // section_type: "P",
-        test_type: "P",
+        test_type: "M",
         // test_status: "E",
       };
       const header = {
@@ -34,7 +34,7 @@ const Reading = ({ apiEndpoint = 'http://127.0.0.1:8000/api/toefl/r_q' }) => {
         "user-id": 1,
         "api-token": "xyz43jvtf",
       };
-
+  
       dispatch(
         getAllQuestionsList({
           header,
@@ -43,17 +43,17 @@ const Reading = ({ apiEndpoint = 'http://127.0.0.1:8000/api/toefl/r_q' }) => {
             if (response?.data?.statusCode === 200) {
               const data = response.data.data;
               // console.log('Fetched data:', data);
-
+  
               const parsedData = data.map(test => ({
                 ...test,
                 paragraph: Array.isArray(test.paragraph) ? test.paragraph : [test.paragraph],
                 questions: Array.isArray(test.questions) ? test.questions : [test.questions],
               }));
-
+  
               await saveTestsToDB(parsedData);
               setLoading(false);
             } else if (response?.data?.statusCode === 599) {
-             
+              // Handle other statuses if needed
             }
           },
           onFailure: (error) => {
@@ -63,8 +63,8 @@ const Reading = ({ apiEndpoint = 'http://127.0.0.1:8000/api/toefl/r_q' }) => {
         })
       );
     }
-    fetchQuestions()
-  }, [dispatch])
+    // fetchQuestions()
+  // },[])
   // const fetchQuestions = useCallback(() => {
   //   const dataList = {
   //     user_id: 1,
@@ -134,13 +134,13 @@ const Reading = ({ apiEndpoint = 'http://127.0.0.1:8000/api/toefl/r_q' }) => {
 
   useEffect(() => {
     if (tests && tests.length === 0) {
-      // fetchQuestions();
+      fetchQuestions();
     } else {
       setLoading(false);
       loadSelectedOptions();
     }
-    // }, [fetchQuestions, loadSelectedOptions, tests]);
-  }, [loadSelectedOptions, tests]);
+  }, [fetchQuestions, loadSelectedOptions, tests]);
+// }, [ loadSelectedOptions, tests]);
 
   useEffect(() => {
     localStorage.setItem('currentIndex', currentIndex);
@@ -149,9 +149,9 @@ const Reading = ({ apiEndpoint = 'http://127.0.0.1:8000/api/toefl/r_q' }) => {
 
   const handleNextOrSubmit = () => {
     if (currentIndex === tests.length - 1 && currentQuestionIndex === questions.length - 1) {
-      handleContinue(); 
+      handleContinue(); // Submit if it's the last question
     } else {
-      handleNext();
+      handleNext(); // Move to the next question otherwise
     }
   };
 
@@ -181,21 +181,21 @@ const Reading = ({ apiEndpoint = 'http://127.0.0.1:8000/api/toefl/r_q' }) => {
 
     setScore(prevScore => prevScore + questionScore);
 
-    // try {
-    //   await advancedTOEFLDatabase.ReadingTestAnswer.add({
-    //     testId: tests[currentIndex].id,
-    //     questionIndex: currentQuestionIndex,
-    //     answer: selectedOptionsForCurrentQuestion,
-    //   });
-    //   // await axios.post('http://localhost:8000/api/Store', {
-    //   //   testId: tests[currentIndex].id,
-    //   //   questionIndex: currentQuestionIndex,
-    //   //   answer: selectedOptionsForCurrentQuestion,
-    //   //   score: questionScore,
-    //   // });
-    // } catch (error) {
-    //   console.error('Error saving answer to IndexedDB:', error);
-    // }
+    try {
+      await advancedTOEFLDatabase.ReadingTestAnswer.add({
+        testId: tests[currentIndex].id,
+        questionIndex: currentQuestionIndex,
+        answer: selectedOptionsForCurrentQuestion,
+      });
+      // await axios.post('http://localhost:8000/api/Store', {
+      //   testId: tests[currentIndex].id,
+      //   questionIndex: currentQuestionIndex,
+      //   answer: selectedOptionsForCurrentQuestion,
+      //   score: questionScore,
+      // });
+    } catch (error) {
+      console.error('Error saving answer to IndexedDB:', error);
+    }
 
     // Navigate to the end of section or handle completion logic
     navigate('/end-of-section');
@@ -261,8 +261,8 @@ const Reading = ({ apiEndpoint = 'http://127.0.0.1:8000/api/toefl/r_q' }) => {
     setCurrentQuestionIndex(-1);
     setSelectedOptions({});
     setScore(0);
-    localStorage.clear();
-    advancedTOEFLDatabase.ReadingTestAnswer.clear();
+    localStorage.removeItem('currentIndex');
+    localStorage.removeItem('currentQuestionIndex');
     debouncedSaveSelectedOptionsToDB({});
   };
 
@@ -325,50 +325,11 @@ const Reading = ({ apiEndpoint = 'http://127.0.0.1:8000/api/toefl/r_q' }) => {
   const allowsMultipleSelection = getMaxSelectionLimit(currentQuestionIndex) > 1;
   const isLastQuestion = currentIndex === tests.length - 1 && currentQuestionIndex === questions.length - 1;
 
-
-  const ShowHideContents = ({ paragraph }) => {
-    const regex = /\{(.+?)\}/g;
-
-    let matches = [];
-    let match;
-
-    while ((match = regex.exec(paragraph)) !== null) {
-      matches.push(match[1]); 
-    }
-
-    const [visibleContent, setVisibleContent] = useState(
-      new Array(matches.length).fill(false)
-    );
-
-    const toggleVisibility = (index) => {
-      const newVisibility = [...visibleContent];
-      newVisibility[index] = !newVisibility[index];
-      setVisibleContent(newVisibility);
-    };
-
-    return paragraph?.split(regex).map((part, index) => {
-      if (index % 2 === 0) {
-        return <span key={index}>{part}</span>;
-      } else {
-        const matchIndex = Math.floor(index / 2);
-        return (
-          <span key={index}>
-            <button onClick={() => toggleVisibility(matchIndex)}>
-              {visibleContent[matchIndex] ? "" : ""}
-              {visibleContent[matchIndex] && <span>{matches[matchIndex]}</span>}
-            </button>
-          </span>
-        );
-      }
-    });
-  };
-
-
   return (
     <div className="only-para-type-wrap">
       <div className="head-bar">
         <span>Reading</span>
-        {/* <button onClick={resetTest} className="reset-test-button">Restart Test</button> */}
+        <button onClick={resetTest} className="reset-test-button">Restart Test</button>
         <button onClick={handleSave} className="save-test-button">Save</button>
         <button onClick={handleExit} className="exit-test-button">Exit</button>
       </div>
@@ -385,13 +346,9 @@ const Reading = ({ apiEndpoint = 'http://127.0.0.1:8000/api/toefl/r_q' }) => {
           <div className="question-box">
             <div className="question-content">
               <div className="question-item">
-
-                <p>{currentQuestionIndex === 8 ?
-                  <ShowHideContents paragraph={currentQuestion?.question} />
-                  : currentQuestion?.question}</p>
+                <p>{currentQuestion?.question}</p>
                 <ul>
                   {currentQuestion?.options?.map((option, oIndex) => (
-
                     <li key={oIndex}>
                       <label>
                         <input

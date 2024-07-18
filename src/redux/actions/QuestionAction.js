@@ -10,15 +10,17 @@ export const getAllQuestionsList =
 
     const formData = new FormData();
     formData.append("user_id", dataList?.user_id);
+    // console.log(Constants.apiBaseUrl + Constants.ApiAction.reading)
+    // debugger
     formData.append("test_id", dataList?.test_id);
-    formData.append("section_type", dataList?.section_type);
+    // formData.append("section_type", dataList?.section_type);
     formData.append("test_type", dataList?.test_type);
-    formData.append("test_status", dataList?.test_status);
+    // formData.append("test_status", dataList?.test_status);
     // formData.append("part", dataList?.part);
     // formData.append("internet_speed", dataList?.internet_speed);
     try {
       await axios
-        .post(Constants.apiBaseUrl + Constants.ApiAction.questions, formData, {
+        .post(Constants.apiBaseUrl + Constants.ApiAction.reading, formData, {
           headers: header,
         })
         .then((response) => {

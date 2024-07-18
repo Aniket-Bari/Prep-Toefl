@@ -6,6 +6,7 @@ import advancedTOEFLDatabase from './../../../db';
 import { useDispatch } from 'react-redux';
 import { getAllQuestionsList } from './../../../redux/actions/QuestionAction';
 import debounce from 'lodash.debounce';
+import ShowHideContent from './temp';
 // import axios from 'axios';
 
 const Reading = ({ apiEndpoint = 'http://127.0.0.1:8000/api/toefl/r_q' }) => {
@@ -25,9 +26,7 @@ const Reading = ({ apiEndpoint = 'http://127.0.0.1:8000/api/toefl/r_q' }) => {
       const dataList = {
         user_id: 1,
         test_id: 1,
-        // section_type: "P",
         test_type: "P",
-        // test_status: "E",
       };
       const header = {
         Accept: "application/json",
@@ -42,8 +41,6 @@ const Reading = ({ apiEndpoint = 'http://127.0.0.1:8000/api/toefl/r_q' }) => {
           onSuccess: async (response) => {
             if (response?.data?.statusCode === 200) {
               const data = response.data.data;
-              // console.log('Fetched data:', data);
-
               const parsedData = data.map(test => ({
                 ...test,
                 paragraph: Array.isArray(test.paragraph) ? test.paragraph : [test.paragraph],
@@ -53,7 +50,7 @@ const Reading = ({ apiEndpoint = 'http://127.0.0.1:8000/api/toefl/r_q' }) => {
               await saveTestsToDB(parsedData);
               setLoading(false);
             } else if (response?.data?.statusCode === 599) {
-             
+              // Handle other statuses if needed
             }
           },
           onFailure: (error) => {
@@ -63,50 +60,8 @@ const Reading = ({ apiEndpoint = 'http://127.0.0.1:8000/api/toefl/r_q' }) => {
         })
       );
     }
-    fetchQuestions()
-  }, [dispatch])
-  // const fetchQuestions = useCallback(() => {
-  //   const dataList = {
-  //     user_id: 1,
-  //     // test_id: 1,
-  //     // section_type: "P",
-  //     // test_type: "reading1",
-  //     // test_status: "E",
-  //   };
-  //   const header = {
-  //     Accept: "application/json",
-  //     "user-id": 1,
-  //     "api-token": "xyz43jvtf",
-  //   };
-
-  //   dispatch(
-  //     getAllQuestionsList({
-  //       header,
-  //       dataList,
-  //       onSuccess: async (response) => {
-  //         if (response?.data?.statusCode === 200) {
-  //           const data = response.data.data;
-  //           // console.log('Fetched data:', data);
-
-  //           const parsedData = data.map(test => ({
-  //             ...test,
-  //             paragraph: Array.isArray(test.paragraph) ? test.paragraph : [test.paragraph],
-  //             questions: Array.isArray(test.questions) ? test.questions : [test.questions],
-  //           }));
-
-  //           await saveTestsToDB(parsedData);
-  //           setLoading(false);
-  //         } else if (response?.data?.statusCode === 599) {
-  //           // Handle other statuses if needed
-  //         }
-  //       },
-  //       onFailure: (error) => {
-  //         setError(error.message);
-  //         setLoading(false);
-  //       },
-  //     })
-  //   );
-  // }, [dispatch]);
+    fetchQuestions();
+  }, [dispatch]);
 
   const saveTestsToDB = async (tests) => {
     try {
@@ -139,7 +94,6 @@ const Reading = ({ apiEndpoint = 'http://127.0.0.1:8000/api/toefl/r_q' }) => {
       setLoading(false);
       loadSelectedOptions();
     }
-    // }, [fetchQuestions, loadSelectedOptions, tests]);
   }, [loadSelectedOptions, tests]);
 
   useEffect(() => {
@@ -149,9 +103,9 @@ const Reading = ({ apiEndpoint = 'http://127.0.0.1:8000/api/toefl/r_q' }) => {
 
   const handleNextOrSubmit = () => {
     if (currentIndex === tests.length - 1 && currentQuestionIndex === questions.length - 1) {
-      handleContinue(); 
+      handleContinue(); // Submit if it's the last question
     } else {
-      handleNext();
+      handleNext(); // Move to the next question otherwise
     }
   };
 
@@ -181,23 +135,16 @@ const Reading = ({ apiEndpoint = 'http://127.0.0.1:8000/api/toefl/r_q' }) => {
 
     setScore(prevScore => prevScore + questionScore);
 
-    // try {
-    //   await advancedTOEFLDatabase.ReadingTestAnswer.add({
-    //     testId: tests[currentIndex].id,
-    //     questionIndex: currentQuestionIndex,
-    //     answer: selectedOptionsForCurrentQuestion,
-    //   });
-    //   // await axios.post('http://localhost:8000/api/Store', {
-    //   //   testId: tests[currentIndex].id,
-    //   //   questionIndex: currentQuestionIndex,
-    //   //   answer: selectedOptionsForCurrentQuestion,
-    //   //   score: questionScore,
-    //   // });
-    // } catch (error) {
-    //   console.error('Error saving answer to IndexedDB:', error);
-    // }
+    try {
+      await advancedTOEFLDatabase.ReadingTestAnswer.add({
+        testId: tests[currentIndex].id,
+        questionIndex: currentQuestionIndex,
+        answer: selectedOptionsForCurrentQuestion,
+      });
+    } catch (error) {
+      console.error('Error saving answer to IndexedDB:', error);
+    }
 
-    // Navigate to the end of section or handle completion logic
     navigate('/end-of-section');
   };
 
@@ -261,14 +208,12 @@ const Reading = ({ apiEndpoint = 'http://127.0.0.1:8000/api/toefl/r_q' }) => {
     setCurrentQuestionIndex(-1);
     setSelectedOptions({});
     setScore(0);
-    localStorage.clear();
-    advancedTOEFLDatabase.ReadingTestAnswer.clear();
+    localStorage.removeItem('currentIndex');
+    localStorage.removeItem('currentQuestionIndex');
     debouncedSaveSelectedOptionsToDB({});
   };
 
-  const handleSave = () => {
-
-  };
+  const handleSave = () => {};
 
   const handleExit = () => {
     resetTest();
@@ -293,7 +238,6 @@ const Reading = ({ apiEndpoint = 'http://127.0.0.1:8000/api/toefl/r_q' }) => {
   let questions = [];
 
   try {
-    // const parsedParagraph = JSON.parse(currentTest.paragraph);
     title = JSON.parse(currentTest.paragraph).title || '';
     paragraphs = JSON.parse(currentTest.paragraph).paragraphs || [];
     questions = JSON.parse(currentTest.questions).questions || [];
@@ -304,128 +248,82 @@ const Reading = ({ apiEndpoint = 'http://127.0.0.1:8000/api/toefl/r_q' }) => {
   const highlightText = (text, wordsToHighlight) => {
     if (!text || !wordsToHighlight || wordsToHighlight.length === 0) return text;
 
-    const highlightedText = text.map((paragraph, index) => {
-      if (index === 0) {
-        return paragraph;
-      }
-      let content = paragraph.content;
-      wordsToHighlight.forEach(word => {
-        const regex = new RegExp(`\\b(${word})\\b`, 'gi');
-        content = content.replace(regex, `<span class="highlight">$1</span>`);
+    const highlightedText = text.map((paragraph, paragraphIndex) => {
+      const wordsArray = paragraph.split(' ');
+
+      const processedText = wordsArray.map((word, wordIndex) => {
+        const isHighlighted = wordsToHighlight.some(
+          highlightWord => word.toLowerCase().includes(highlightWord.toLowerCase())
+        );
+
+        return (
+          <span
+            key={`${paragraphIndex}-${wordIndex}`}
+            className={isHighlighted ? 'highlight' : ''}
+          >
+            {word}{' '}
+          </span>
+        );
       });
-      return { ...paragraph, content };
+
+      return <p key={paragraphIndex}>{processedText}</p>;
     });
 
     return highlightedText;
   };
 
-  const highlightedParagraphs = highlightText(paragraphs, ['ingenuity', 'a competitive edge over its neighbors', 'The thriving obsidian operation,', 'In fact, artifacts and pottery from Teotihuacán have been discovered in sites as far away as the Mayan lowlands, the Guatemalan highlands, northern Mexico, and the Gulf Coast of Mexico.', 'Not a single pebble was found that might have indicated that the pebbles came from the nearby continent', 'scores', 'Thus, scientists had information about the shape of the domes but not about their chemical composition and origin.']);
-
-  const currentQuestion = questions[currentQuestionIndex] || {};
-  const allowsMultipleSelection = getMaxSelectionLimit(currentQuestionIndex) > 1;
-  const isLastQuestion = currentIndex === tests.length - 1 && currentQuestionIndex === questions.length - 1;
-
-
-  const ShowHideContents = ({ paragraph }) => {
-    const regex = /\{(.+?)\}/g;
-
-    let matches = [];
-    let match;
-
-    while ((match = regex.exec(paragraph)) !== null) {
-      matches.push(match[1]); 
-    }
-
-    const [visibleContent, setVisibleContent] = useState(
-      new Array(matches.length).fill(false)
-    );
-
-    const toggleVisibility = (index) => {
-      const newVisibility = [...visibleContent];
-      newVisibility[index] = !newVisibility[index];
-      setVisibleContent(newVisibility);
-    };
-
-    return paragraph?.split(regex).map((part, index) => {
-      if (index % 2 === 0) {
-        return <span key={index}>{part}</span>;
-      } else {
-        const matchIndex = Math.floor(index / 2);
-        return (
-          <span key={index}>
-            <button onClick={() => toggleVisibility(matchIndex)}>
-              {visibleContent[matchIndex] ? "" : ""}
-              {visibleContent[matchIndex] && <span>{matches[matchIndex]}</span>}
-            </button>
-          </span>
-        );
-      }
-    });
-  };
-
+  const wordsToHighlight = ['Teotihuacán', 'pottery', 'discovered', 'scientists'];
 
   return (
-    <div className="only-para-type-wrap">
-      <div className="head-bar">
-        <span>Reading</span>
-        {/* <button onClick={resetTest} className="reset-test-button">Restart Test</button> */}
-        <button onClick={handleSave} className="save-test-button">Save</button>
-        <button onClick={handleExit} className="exit-test-button">Exit</button>
-      </div>
-      <div className="content-wrapper" key={currentTest.id}>
-        <div className="paragraph-box">
-          <div className="paragraph-content">
-            <h4>{title}</h4>
-            {highlightedParagraphs.map((paragraph, index) => (
-              <p key={index} dangerouslySetInnerHTML={{ __html: paragraph.content }} />
+    <div className="reading-test">
+      <h2>TOEFL Reading Test</h2>
+      <div className="score">Score: {score}</div>
+      {title && <h2>{title}</h2>}
+      {currentQuestionIndex === 8 && (
+        <ShowHideContent paragraphs={paragraphs} />
+      )}
+      {highlightText(paragraphs, wordsToHighlight)}
+      {currentQuestionIndex >= 0 && currentQuestionIndex < questions.length && (
+        <div className="question">
+          <p>{questions[currentQuestionIndex].text}</p>
+          <ul>
+            {questions[currentQuestionIndex].options.map((option, index) => (
+              <li key={index}>
+                <input
+                  type={questions[currentQuestionIndex].allowsMultipleSelection ? 'checkbox' : 'radio'}
+                  id={`option-${index}`}
+                  name={`question-${currentQuestionIndex}`}
+                  value={option}
+                  checked={
+                    selectedOptions[currentQuestionIndex] &&
+                    selectedOptions[currentQuestionIndex].includes(option)
+                  }
+                  onChange={event =>
+                    handleOptionChange(
+                      event,
+                      questions[currentQuestionIndex].allowsMultipleSelection
+                    )
+                  }
+                />
+                <label htmlFor={`option-${index}`}>{option}</label>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
-        {currentQuestionIndex >= 0 && (
-          <div className="question-box">
-            <div className="question-content">
-              <div className="question-item">
-
-                <p>{currentQuestionIndex === 8 ?
-                  <ShowHideContents paragraph={currentQuestion?.question} />
-                  : currentQuestion?.question}</p>
-                <ul>
-                  {currentQuestion?.options?.map((option, oIndex) => (
-
-                    <li key={oIndex}>
-                      <label>
-                        <input
-                          type={allowsMultipleSelection ? 'checkbox' : 'radio'}
-                          name={`question_${currentQuestionIndex}`}
-                          value={option}
-                          checked={selectedOptions[currentQuestionIndex]?.includes(option) || false}
-                          onChange={e => handleOptionChange(e, allowsMultipleSelection)}
-                        />
-                        {option}
-                      </label>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </div>
-        )}
+      )}
+      <div className="navigation">
+        <button onClick={handlePrevious} disabled={currentQuestionIndex <= 0 && currentIndex <= 0}>
+          Previous
+        </button>
+        <button onClick={handleNextOrSubmit}>
+          {currentIndex === tests.length - 1 && currentQuestionIndex === questions.length - 1
+            ? 'Submit'
+            : 'Next'}
+        </button>
       </div>
-      <div className="navigation-buttons">
-        <button onClick={handlePrevious} disabled={currentIndex === 0 && currentQuestionIndex === 0}>Back</button>
-
-        {isLastQuestion ? (
-          <button className="continue-button" onClick={handleContinue}>Submit</button>
-        ) : (
-          <button onClick={handleNextOrSubmit}>Next</button>
-        )}
-      </div>
-      <div className="score-display">Score: {score} / 30</div>
-      <div>
-        {score >= 24 ? "Advanced (24-30)" :
-          score >= 18 ? "High-Intermediate (18-23)" :
-            score >= 4 ? "Low-Intermediate (4-17)" :
-              "Below Low-Intermediate (0-3)"}
+      <div className="controls">
+        <button onClick={handleSave}>Save</button>
+        <button onClick={handleExit}>Exit</button>
       </div>
     </div>
   );
