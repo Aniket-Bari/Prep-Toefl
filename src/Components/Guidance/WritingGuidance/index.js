@@ -3,11 +3,11 @@ import "./style.scss";
 
 const WritingGuidance = () => {
     return (
-        <div className='reading-guidance-main'>
-            <div className='reading-main-heading'>
+        <div className='/toefl/reading-guidance-main'>
+            <div className='/toefl/reading-main-heading'>
                 <h4>Build a sentence</h4>
             </div>
-            <div className='reading-description-main'>
+            <div className='/toefl/reading-description-main'>
                 <div>
                     <p>
                         This task has a dialogue with two parts. The first part is complete, but the second part has blanks. Move the words to the blanks to make a grammatical sentence. For some questions, there may be more words than blanks. In those cases, move only the words you need into the blanks.

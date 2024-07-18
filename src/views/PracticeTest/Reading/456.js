@@ -16,7 +16,7 @@ const Reading = ({ apiEndpoint = 'http://127.0.0.1:8000/api/toefl/r_q' }) => {
   const [selectedOptions, setSelectedOptions] = useState({});
   const [score, setScore] = useState(0);
 
-  const tests = useLiveQuery(() => advancedTOEFLDatabase.ReadingTestQuestion.toArray(), []);
+  const tests = useLiveQuery(() => advancedTOEFLDatabase.readingTestQuestion.toArray(), []);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -110,8 +110,8 @@ const Reading = ({ apiEndpoint = 'http://127.0.0.1:8000/api/toefl/r_q' }) => {
 
   const saveTestsToDB = async (tests) => {
     try {
-      await advancedTOEFLDatabase.ReadingTestQuestion.clear();
-      await advancedTOEFLDatabase.ReadingTestQuestion.bulkAdd(tests);
+      await advancedTOEFLDatabase.readingTestQuestion.clear();
+      await advancedTOEFLDatabase.readingTestQuestion.bulkAdd(tests);
     } catch (error) {
       console.error('Error saving tests to IndexedDB:', error);
     }
@@ -121,7 +121,7 @@ const Reading = ({ apiEndpoint = 'http://127.0.0.1:8000/api/toefl/r_q' }) => {
     if (!tests || tests.length === 0) return;
 
     try {
-      const answers = await advancedTOEFLDatabase.ReadingTestAnswer.where({ testId: tests[currentIndex]?.id }).toArray();
+      const answers = await advancedTOEFLDatabase.readingTestAnswer.where({ testId: tests[currentIndex]?.id }).toArray();
       const selectedOptionsMap = {};
       answers.forEach(answer => {
         selectedOptionsMap[answer.questionIndex] = answer.answer;
@@ -182,7 +182,7 @@ const Reading = ({ apiEndpoint = 'http://127.0.0.1:8000/api/toefl/r_q' }) => {
     setScore(prevScore => prevScore + questionScore);
 
     // try {
-    //   await advancedTOEFLDatabase.ReadingTestAnswer.add({
+    //   await advancedTOEFLDatabase.readingTestAnswer.add({
     //     testId: tests[currentIndex].id,
     //     questionIndex: currentQuestionIndex,
     //     answer: selectedOptionsForCurrentQuestion,
@@ -208,7 +208,7 @@ const Reading = ({ apiEndpoint = 'http://127.0.0.1:8000/api/toefl/r_q' }) => {
         questionIndex: parseInt(questionIndex, 10),
         answer: updatedSelectedOptions[questionIndex],
       }));
-      await advancedTOEFLDatabase.ReadingTestAnswer.bulkPut(answers);
+      await advancedTOEFLDatabase.readingTestAnswer.bulkPut(answers);
     } catch (error) {
       console.error('Error saving selected options to IndexedDB:', error);
     }
@@ -262,7 +262,7 @@ const Reading = ({ apiEndpoint = 'http://127.0.0.1:8000/api/toefl/r_q' }) => {
     setSelectedOptions({});
     setScore(0);
     localStorage.clear();
-    advancedTOEFLDatabase.ReadingTestAnswer.clear();
+    advancedTOEFLDatabase.readingTestAnswer.clear();
     debouncedSaveSelectedOptionsToDB({});
   };
 

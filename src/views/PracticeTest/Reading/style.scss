@@ -2,6 +2,7 @@
 
 $primary-color: #007bff;
 
+
 .only-para-type-wrap {
   margin: 5%;
   margin-left: 15%;
@@ -64,7 +65,7 @@ $primary-color: #007bff;
       color: #fff;
       border: none;
       transition: background-color 0.3s ease;
-      margin-left: 61%;
+      margin-left: 74%;
 
       &:hover {
         background-color: #038a85;
@@ -79,7 +80,7 @@ $primary-color: #007bff;
       color: #fff;
       border: none;
       transition: background-color 0.3s ease;
-      margin-left: 0%;
+      margin-left: 1%;
 
       &:hover {
         background-color: #038a85;
@@ -133,6 +134,30 @@ $primary-color: #007bff;
               font-weight: normal;
               padding: 2px 4px;
               // border-radius: 0px;
+            }
+          }
+          .showContent {
+            display: block;
+            margin-top: 10px;
+          }
+
+          .hideContent {
+            display: none;
+          }
+          button {
+            background-color: black;
+            color: white;
+            box-sizing: border-box;
+            height: auto;
+            text-align: justify;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            margin-top: 10px;
+
+            &:hover {
+              background-color: black;
             }
           }
 
@@ -213,7 +238,7 @@ $primary-color: #007bff;
   .navigation-buttons {
     display: flex;
     justify-content: space-between;
-    margin-top: -1%;
+    margin-top: 1%;
 
     @media (max-width: 768px) {
       flex-direction: column;
@@ -277,3 +302,4 @@ $primary-color: #007bff;
     margin-left: 83%;
   }
 }
+

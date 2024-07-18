@@ -57,7 +57,7 @@ body {
 
 /* Component specific styles */
 .general-test-info,
-.reading-direction,
+.toefl//toefl/reading-direction,
 .end-of-section,
 .volume-directions,
 .put-on-headset,
@@ -70,7 +70,7 @@ body {
   border-radius: 5px;
 }
 
-.reading,
+./toefl/reading,
 .listening,
 .speaking,
 .writing {

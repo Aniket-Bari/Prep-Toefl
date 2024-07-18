@@ -38,7 +38,7 @@ const SpeakingDirection = (props) => {
 
     return (
         <div className='speaking-guidance-main'>
-            <div className='reading-main-heading'>
+            <div className='/toefl/reading-main-heading'>
                 <h4>Speaking Section Directions</h4>
             </div>
             <div className='speaking-description-main'>

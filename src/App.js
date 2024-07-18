@@ -1,51 +1,59 @@
 import React from 'react';
-import { createStore, applyMiddleware } from 'redux';
-import { Provider } from 'react-redux';
-import { thunk } from 'redux-thunk';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import rootReducer from './redux/reducer/rootReducer';
-import { VolumeProvider } from './context/VolumeContext';
-import Header from './Components/Header';
-import GeneralTestInfo from './Components/Guidance/GeneralTestInfo';
-import ReadingDirection from './Components/Guidance/ReadingDirection';
-import Reading from './views/PracticeTest/Reading';
-import EndOfSection from './Components/Guidance/EndOfSection';
-// import VolumeDirections from './Components/Guidance/VolumeDirections';
-// import Listening from './views/PracticeTest/Listening';
-// import PutOnHeadset from './Components/Guidance/PutOnHeadset';
-// import SpeakingDirection from './Components/Guidance/SpeakingDirection';
-// import Speaking from './views/PracticeTest/Speaking';
-// import WritingDirection from './Components/Guidance/WritingDirection';
-// import Writing from './views/PracticeTest/Writing';
-// import ResultView from './views/ResultView';
-import './App.css';
-
-const store = createStore(rootReducer, applyMiddleware(thunk));
+import Routing from './Routing';
+import advancedTOEFLDatabase from './db';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const App = () => {
+  const navigation = useNavigate();
+  const location = useLocation();
+
+  let getURLQueryString = new URLSearchParams(window?.location?.search);
+  let queryString = '';
+
+  for (const entry of getURLQueryString.entries()) {
+    queryString = entry[0];
+  }
+
+  let searchParams = new URLSearchParams(queryString);
+
+
+  
+  const handleClearLocalStorageData = () =>{
+    localStorage.clear();
+    advancedTOEFLDatabase.speakingTestAnswer.clear();
+    advancedTOEFLDatabase.writingTestAnswer.clear();
+    advancedTOEFLDatabase.readingTestAnswer.clear();
+    advancedTOEFLDatabase.listeningTestAnswer.clear();
+    advancedTOEFLDatabase.speakingTestAnswer.clear();
+    advancedTOEFLDatabase.listeningTestQuestions.clear();
+    advancedTOEFLDatabase.readingTestQuestions.clear();
+    advancedTOEFLDatabase.writingTestQuestions.clear();
+    advancedTOEFLDatabase.speakingTestQuestions.clear();
+    advancedTOEFLDatabase.customeTestQuestions.clear();
+    advancedTOEFLDatabase.customTestAnswer.clear();
+  }
+
+React.useEffect(()=>{
+  if(performance.navigation.type !== performance.navigation.TYPE_RELOAD){
+    handleClearLocalStorageData();
+  }  
+  if(location?.pathname === "/toefl/" || location?.pathname === "/toefl"){
+    localStorage.setItem("userInfo",
+      JSON.stringify({
+        id:searchParams.get("id")
+      })
+    )
+
+  }
+
+    localStorage.clear();
+    advancedTOEFLDatabase.readingTestQuestion.clear()
+  
+},[])
+
   return (
-    <Provider store={store}>
-      <VolumeProvider>
-        <Router>
-          <Header />
-          <Routes>
-            <Route path="/" element={<GeneralTestInfo />} />
-            <Route path="/reading-direction" element={<ReadingDirection />} />
-            <Route path="/reading" element={<Reading />} />
-            <Route path="/end-of-section" element={<EndOfSection />} />
-            {/*<Route path="/volume-directions" element={<VolumeDirections />} />
-            <Route path="/listening" element={<Listening />} />
-            <Route path="/put-on-headset" element={<PutOnHeadset />} />
-            <Route path="/speaking-direction" element={<SpeakingDirection />} />
-            <Route path="/speaking" element={<Speaking />} />
-            <Route path="/writing-direction" element={<WritingDirection />} />
-            <Route path="/writing" element={<Writing />} />
-            <Route path="/result-view" element={<ResultView />} /> */}
-          </Routes>
-        </Router>
-      </VolumeProvider>
-    </Provider>
+    <Routing />
   );
-};
+}
 
 export default App;

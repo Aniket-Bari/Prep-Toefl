@@ -12,7 +12,7 @@ const Reading = ({ apiEndpoint = 'http://127.0.0.1:8000/api/toefl/r_q' }) => {
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [correctAnswers, setCorrectAnswers] = useState([]);
 
-  const tests = useLiveQuery(() => advancedTOEFLDatabase.ReadingTestQuestion.toArray(), []);
+  const tests = useLiveQuery(() => advancedTOEFLDatabase.readingTestQuestion.toArray(), []);
   const navigate = useNavigate();
 
   // const fetchParagraphData = async (testId) => {
@@ -58,8 +58,8 @@ const Reading = ({ apiEndpoint = 'http://127.0.0.1:8000/api/toefl/r_q' }) => {
 
   const saveTestsToDB = async (tests) => {
     try {
-      await advancedTOEFLDatabase.ReadingTestQuestion.clear();
-      await advancedTOEFLDatabase.ReadingTestQuestion.bulkAdd(tests);
+      await advancedTOEFLDatabase.readingTestQuestion.clear();
+      await advancedTOEFLDatabase.readingTestQuestion.bulkAdd(tests);
     } catch (error) {
       console.error('Error saving tests to IndexedDB:', error);
     }
@@ -69,7 +69,7 @@ const Reading = ({ apiEndpoint = 'http://127.0.0.1:8000/api/toefl/r_q' }) => {
     if (!tests || tests.length === 0) return;
 
     try {
-      const answers = await advancedTOEFLDatabase.ReadingTestAnswer.where({ testId: tests[currentIndex]?.id }).toArray();
+      const answers = await advancedTOEFLDatabase.readingTestAnswer.where({ testId: tests[currentIndex]?.id }).toArray();
       const currentAnswer = answers.find(correct_answer => correct_answer.questionIndex === currentQuestionIndex);
       setSelectedOptions(currentAnswer ? currentAnswer.answer : []);
     } catch (error) {
@@ -115,7 +115,7 @@ const Reading = ({ apiEndpoint = 'http://127.0.0.1:8000/api/toefl/r_q' }) => {
     const isCorrect = currentQuestionCorrectAnswers.every(answer => selectedOptions.includes(answer));
 
     try {
-      await advancedTOEFLDatabase.ReadingTestAnswer.add({
+      await advancedTOEFLDatabase.readingTestAnswer.add({
         testId: tests[currentIndex].id,
         answer: selectedOptions,
         isCorrect,

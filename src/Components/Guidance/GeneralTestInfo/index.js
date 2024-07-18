@@ -14,7 +14,7 @@ const GeneralTestInfo = () => {
         </p>
         <ul>
           <li>
-            In the <b>Reading</b> section, you will answer questions about reading passages. Unlike the actual test, you will be able to review the correct answer for each question by selecting “Show Answer”. You may also check your answers on the Review Screen which will appear at the end of the section. In the actual test, the Reading review screen will only show you which questions you have answered.
+            In the <b>Reading</b> section, you will answer questions about /toefl/reading passages. Unlike the actual test, you will be able to review the correct answer for each question by selecting “Show Answer”. You may also check your answers on the Review Screen which will appear at the end of the section. In the actual test, the Reading review screen will only show you which questions you have answered.
           </li>
           <li>
             In the <b>Listening</b> section, you will answer questions about conversations and lectures. Unlike the actual test, you will be able to review the correct answer for each question by selecting “Show Answer”. You may also check your answers on the Review Screen which will appear at the end of the section. In the actual test, there is no review screen in the Listening section.
@@ -26,7 +26,7 @@ const GeneralTestInfo = () => {
             In the <b>Writing</b> section, you will see two types of writing tasks. The first task asks you to write about the relationship between a passage you have read and a lecture you have heard. The second writing task will ask you to write your opinion about a topic or issue. In this practice test, you will not write your responses. Instead, you will see sample responses for each task.
           </li>
         </ul>
-        <h3>Click <Link to="/reading-direction">Continue</Link> to go on.</h3>
+        <h3>Click <Link to="/toefl/reading-direction">Continue</Link> to go on.</h3>
       </div>
     </div>
   );

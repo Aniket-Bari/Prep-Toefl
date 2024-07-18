@@ -6,16 +6,16 @@
     border-width: 1px 1px 1px 1px;
     border-style: solid;
 
-    .reading-main-heading {
+    ./toefl/reading-main-heading {
         text-align: center;
         padding: 20px 0 20px 0;
     }
 
-    .reading-description-main {
+    ./toefl/reading-description-main {
        padding: 0 3% 24px 3%;
         font-size: 16px;
 
-        .reading-description-main {
+        ./toefl/reading-description-main {
             margin: 36px 0 20px 0;
         }
     }

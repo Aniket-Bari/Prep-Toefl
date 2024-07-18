@@ -23,7 +23,7 @@ const VolumeDirections = (props) => {
 
   return (
     <div className="volume-direction-main">
-      <div className="reading-main-heading">
+      <div className="/toefl/reading-main-heading">
         <h4>Changing the Volume</h4>
       </div>
       <div className="speaking-description-main">

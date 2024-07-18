@@ -37,11 +37,11 @@ const WritingDirection = () => {
     }, [updateVolume]);
 
     return (
-        <div className='reading-guidance-main'>
-            <div className='reading-main-heading'>
+        <div className='/toefl/reading-guidance-main'>
+            <div className='/toefl/reading-main-heading'>
                 <h4>Writing Section Directions</h4>
             </div>
-            <div className='reading-description-main'>
+            <div className='/toefl/reading-description-main'>
                 <div>
                     <p>
                         This section measures your ability to use written English. It is divided into separately timed parts.

@@ -3,10 +3,10 @@ import { Button, Container, Navbar, Row, Col } from 'react-bootstrap';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Logo from '../../assets/Images/prep27-logo.png';
 import { useVolume } from './../../context/VolumeContext';
-import readingblankbox from './../../assets/Images/reading-help-3.png';
+import readingblankbox from './../../assets/Images//toefl/reading-help-3.png';
 import listeningHelp from './../../assets/Images/listening-help-type.png';
-import readingblckbox from './../../assets/Images/reading-help-1.png';
-import readingsqbox from './../../assets/Images/reading-help-2.png';
+import readingblckbox from './../../assets/Images//toefl/reading-help-1.png';
+import readingsqbox from './../../assets/Images//toefl/reading-help-2.png';
 import writinghelp from './../../assets/Images/writing-help-1.png';
 import './style.scss';
 

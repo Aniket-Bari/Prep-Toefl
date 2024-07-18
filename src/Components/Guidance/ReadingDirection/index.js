@@ -7,8 +7,8 @@ export default function Index() {
   const navigate = useNavigate();
 
   const handleStart = () => {
-    // Navigate to the reading page or route
-    navigate('/reading'); // Replace '/reading' with your actual route
+    // Navigate to the /toefl/reading page or route
+    navigate('/toefl/reading'); // Replace '//toefl/reading' with your actual route
   };
 
   return (

@@ -8,7 +8,14 @@ import { getAllQuestionsList } from './../../../redux/actions/QuestionAction';
 import debounce from 'lodash.debounce';
 // import axios from 'axios';
 
-const Reading = ({ apiEndpoint = 'http://127.0.0.1:8000/api/toefl/r_q' }) => {
+
+
+const Reading = () => {
+  const getQuestionsReadingTestDataOfDB = useLiveQuery(
+  () => advancedTOEFLDatabase.readingTestQuestion.toArray(),
+  []
+);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(parseInt(localStorage.getItem('currentIndex'), 10) || 0);
@@ -16,12 +23,14 @@ const Reading = ({ apiEndpoint = 'http://127.0.0.1:8000/api/toefl/r_q' }) => {
   const [selectedOptions, setSelectedOptions] = useState({});
   const [score, setScore] = useState(0);
 
-  const tests = useLiveQuery(() => advancedTOEFLDatabase.ReadingTestQuestion.toArray(), []);
+  const tests = useLiveQuery(() => advancedTOEFLDatabase.readingTestQuestion.toArray(), []);
+  // console.log(tests)
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  useEffect(() => {
+  // useEffect(() => {
     const fetchQuestions = () => {
+      console.log('hii')
       const dataList = {
         user_id: 1,
         test_id: 1,
@@ -40,9 +49,10 @@ const Reading = ({ apiEndpoint = 'http://127.0.0.1:8000/api/toefl/r_q' }) => {
           header,
           dataList,
           onSuccess: async (response) => {
+            console.log(response)
             if (response?.data?.statusCode === 200) {
               const data = response.data.data;
-              // console.log('Fetched data:', data);
+              console.log('Fetched data:', data);
 
               const parsedData = data.map(test => ({
                 ...test,
@@ -59,12 +69,13 @@ const Reading = ({ apiEndpoint = 'http://127.0.0.1:8000/api/toefl/r_q' }) => {
           onFailure: (error) => {
             setError(error.message);
             setLoading(false);
+            console.log("hii",error);
           },
         })
       );
     }
-    fetchQuestions()
-  }, [dispatch])
+  //   fetchQuestions()
+  // }, [dispatch])
   // const fetchQuestions = useCallback(() => {
   //   const dataList = {
   //     user_id: 1,
@@ -110,8 +121,8 @@ const Reading = ({ apiEndpoint = 'http://127.0.0.1:8000/api/toefl/r_q' }) => {
 
   const saveTestsToDB = async (tests) => {
     try {
-      await advancedTOEFLDatabase.ReadingTestQuestion.clear();
-      await advancedTOEFLDatabase.ReadingTestQuestion.bulkAdd(tests);
+      await advancedTOEFLDatabase.readingTestQuestion.clear();
+      await advancedTOEFLDatabase.readingTestQuestion.bulkAdd(tests);
     } catch (error) {
       console.error('Error saving tests to IndexedDB:', error);
     }
@@ -121,7 +132,7 @@ const Reading = ({ apiEndpoint = 'http://127.0.0.1:8000/api/toefl/r_q' }) => {
     if (!tests || tests.length === 0) return;
 
     try {
-      const answers = await advancedTOEFLDatabase.ReadingTestAnswer.where({ testId: tests[currentIndex]?.id }).toArray();
+      const answers = await advancedTOEFLDatabase.readingTestAnswer.where({ testId: tests[currentIndex]?.id }).toArray();
       const selectedOptionsMap = {};
       answers.forEach(answer => {
         selectedOptionsMap[answer.questionIndex] = answer.answer;
@@ -133,14 +144,15 @@ const Reading = ({ apiEndpoint = 'http://127.0.0.1:8000/api/toefl/r_q' }) => {
   }, [currentIndex, tests]);
 
   useEffect(() => {
-    if (tests && tests.length === 0) {
-      // fetchQuestions();
+    if (getQuestionsReadingTestDataOfDB && getQuestionsReadingTestDataOfDB?.length === 0) {
+      console.log(getQuestionsReadingTestDataOfDB?.length)
+      fetchQuestions();
     } else {
       setLoading(false);
       loadSelectedOptions();
     }
-    // }, [fetchQuestions, loadSelectedOptions, tests]);
-  }, [loadSelectedOptions, tests]);
+    }, [fetchQuestions, loadSelectedOptions, tests]);
+  // }, [loadSelectedOptions, tests]);
 
   useEffect(() => {
     localStorage.setItem('currentIndex', currentIndex);
@@ -181,24 +193,24 @@ const Reading = ({ apiEndpoint = 'http://127.0.0.1:8000/api/toefl/r_q' }) => {
 
     setScore(prevScore => prevScore + questionScore);
 
-    // try {
-    //   await advancedTOEFLDatabase.ReadingTestAnswer.add({
-    //     testId: tests[currentIndex].id,
-    //     questionIndex: currentQuestionIndex,
-    //     answer: selectedOptionsForCurrentQuestion,
-    //   });
-    //   // await axios.post('http://localhost:8000/api/Store', {
-    //   //   testId: tests[currentIndex].id,
-    //   //   questionIndex: currentQuestionIndex,
-    //   //   answer: selectedOptionsForCurrentQuestion,
-    //   //   score: questionScore,
-    //   // });
-    // } catch (error) {
-    //   console.error('Error saving answer to IndexedDB:', error);
-    // }
+    try {
+      await advancedTOEFLDatabase.readingTestAnswer.add({
+        testId: tests[currentIndex].id,
+        questionIndex: currentQuestionIndex,
+        answer: selectedOptionsForCurrentQuestion,
+      });
+      // await axios.post('http://localhost:8000/api/Store', {
+      //   testId: tests[currentIndex].id,
+      //   questionIndex: currentQuestionIndex,
+      //   answer: selectedOptionsForCurrentQuestion,
+      //   score: questionScore,
+      // });
+    } catch (error) {
+      console.error('Error saving answer to IndexedDB:', error);
+    }
 
     // Navigate to the end of section or handle completion logic
-    navigate('/end-of-section');
+    navigate('/toefl/end-of-section');
   };
 
   const debouncedSaveSelectedOptionsToDB = useCallback(debounce(async (updatedSelectedOptions) => {
@@ -208,7 +220,7 @@ const Reading = ({ apiEndpoint = 'http://127.0.0.1:8000/api/toefl/r_q' }) => {
         questionIndex: parseInt(questionIndex, 10),
         answer: updatedSelectedOptions[questionIndex],
       }));
-      await advancedTOEFLDatabase.ReadingTestAnswer.bulkPut(answers);
+      await advancedTOEFLDatabase.readingTestAnswer.bulkPut(answers);
     } catch (error) {
       console.error('Error saving selected options to IndexedDB:', error);
     }
@@ -262,7 +274,7 @@ const Reading = ({ apiEndpoint = 'http://127.0.0.1:8000/api/toefl/r_q' }) => {
     setSelectedOptions({});
     setScore(0);
     localStorage.clear();
-    advancedTOEFLDatabase.ReadingTestAnswer.clear();
+    advancedTOEFLDatabase.readingTestAnswer.clear();
     debouncedSaveSelectedOptionsToDB({});
   };
 
@@ -272,7 +284,7 @@ const Reading = ({ apiEndpoint = 'http://127.0.0.1:8000/api/toefl/r_q' }) => {
 
   const handleExit = () => {
     resetTest();
-    navigate('/end-of-section');
+    navigate('/toefl/end-of-section');
   };
 
   if (loading) {
@@ -362,7 +374,6 @@ const Reading = ({ apiEndpoint = 'http://127.0.0.1:8000/api/toefl/r_q' }) => {
       }
     });
   };
-
 
   return (
     <div className="only-para-type-wrap">

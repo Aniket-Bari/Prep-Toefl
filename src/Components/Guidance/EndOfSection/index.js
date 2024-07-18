@@ -12,7 +12,7 @@ const EndOfSection = (props) => {
                 <div className='guide'>
                     <p>
                         {heading} &nbsp;
-                        You have seen all of the reading questions in this set. &nbsp;You may go back and review and check your work
+                        You have seen all of the /toefl/reading questions in this set. &nbsp;You may go back and review and check your work
                     </p>
                     <p>
                         Click on <b>RETURN</b> to go back to the last question.

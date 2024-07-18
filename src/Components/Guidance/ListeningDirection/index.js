@@ -91,10 +91,10 @@ const ListeningDirection = (props) => {
 
   return (
     <div className="listening-direction-main">
-      <div className="reading-main-heading">
+      <div className="/toefl/reading-main-heading">
         <h4>Listening Section Directions</h4>
       </div>
-      <div className="reading-description-main">
+      <div className="/toefl/reading-description-main">
         <p>This section measures your ability to understand conversations and lectures in English.</p>
         <p>The Listening section is divided into 2 separately timed parts. In each part you will listen to 1 conversation and 2 lectures. You will hear each conversation or lecture only <b>one</b> time.</p>
         <p>After each conversation or lecture, you will answer some questions about it. The questions typically ask about the main idea and supporting details. Some questions ask about a speakers purpose or attitude. Answer the questions based on what is stated or implied by the speakers.</p>
