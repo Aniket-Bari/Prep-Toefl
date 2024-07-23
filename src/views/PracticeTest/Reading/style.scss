@@ -2,7 +2,6 @@
 
 $primary-color: #007bff;
 
-
 .only-para-type-wrap {
   margin: 5%;
   margin-left: 15%;
@@ -49,7 +48,7 @@ $primary-color: #007bff;
     //   border: none;
     //   transition: background-color 0.3s ease;
     //   margin-left: 55%;
-    
+
 
     //   &:hover {
     //     background-color: #038a85;
@@ -58,7 +57,7 @@ $primary-color: #007bff;
     // }
     .save-test-button {
       padding: 8.5px 26px;
-      
+
       font-size: 12px;
       cursor: pointer;
       background-color: #04aba2;
@@ -72,6 +71,7 @@ $primary-color: #007bff;
         box-shadow: 0px 5px 10px #015f5c;
       }
     }
+
     .exit-test-button {
       padding: 8.5px 26px;
       font-size: 12px;
@@ -136,6 +136,7 @@ $primary-color: #007bff;
               // border-radius: 0px;
             }
           }
+
           .showContent {
             display: block;
             margin-top: 10px;
@@ -144,6 +145,7 @@ $primary-color: #007bff;
           .hideContent {
             display: none;
           }
+
           button {
             background-color: black;
             color: white;
@@ -302,4 +304,3 @@ $primary-color: #007bff;
     margin-left: 83%;
   }
 }
-

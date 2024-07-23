@@ -24,20 +24,20 @@ import { AppContextApl } from './AppContextApl';
 const store = createStore(rootReducer, applyMiddleware(thunk));
 
 
-const Routing=()=> {
-    return (
-        // <Provider store={store}>
-        <AppContextApl.Provider>
+const Routing = () => {
+  return (
+    // <Provider store={store}>
+    <AppContextApl.Provider>
 
-          {/* <VolumeProvider> */}
-            {/* <Router> */}
-              {/* <Header /> */}
-              <Routes>
-                <Route path="/" element={<GeneralTestInfo />} />
-                <Route path="/toefl/reading-direction" element={<ReadingDirection />} />
-                <Route path="/toefl/reading" element={<Reading />} />
-                <Route path="/toefl/end-of-section" element={<EndOfSection />} />
-                {/*<Route path="/volume-directions" element={<VolumeDirections />} />
+      {/* <VolumeProvider> */}
+      {/* <Router> */}
+      {/* <Header /> */}
+      <Routes>
+        <Route path="/toefl/genralTestInfo" element={<GeneralTestInfo />} />
+        <Route path="/toefl/reading-direction" element={<ReadingDirection />} />
+        <Route path="/toefl/reading" element={<Reading />} />
+        <Route path="/toefl/end-of-section" element={<EndOfSection />} />
+        {/*<Route path="/volume-directions" element={<VolumeDirections />} />
                 <Route path="/listening" element={<Listening />} />
                 <Route path="/put-on-headset" element={<PutOnHeadset />} />
                 <Route path="/speaking-direction" element={<SpeakingDirection />} />
@@ -45,12 +45,12 @@ const Routing=()=> {
                 <Route path="/writing-direction" element={<WritingDirection />} />
                 <Route path="/writing" element={<Writing />} />
                 <Route path="/result-view" element={<ResultView />} /> */}
-              </Routes>
-            {/* </Router> */}
-          {/* </VolumeProvider> */}
-        </AppContextApl.Provider>
-        // </Provider>
-      );
+      </Routes>
+      {/* </Router> */}
+      {/* </VolumeProvider> */}
+    </AppContextApl.Provider>
+    // </Provider>
+  );
 }
 
 export default Routing;
